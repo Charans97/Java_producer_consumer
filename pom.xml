@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>Java_producer_consumer</artifactId>
+    <artifactId>JavaConsumer</artifactId>
     <version>1.0-SNAPSHOT</version>
 
 <!--    <properties>-->
@@ -14,21 +14,98 @@
 <!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
 <!--    </properties>-->
 
+<!--    <dependencies>-->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.kafka</groupId>-->
+<!--            <artifactId>kafka-clients</artifactId>-->
+<!--            <version>3.6.0</version>-->
+<!--        </dependency>-->
+<!--    <properties>-->
+<!--        <avro.version>1.8.2</avro.version>-->
+<!--        <kafka.version>0.11.0.1</kafka.version>-->
+<!--        <confluent.version>3.3.1</confluent.version>-->
+<!--    </properties>-->
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>confluent</id>-->
+<!--            <url>https://package.confluent.io/maven/</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
+
+<!--    <dependencies>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.apache.avro</groupId>-->
+<!--            <artifactId>avro</artifactId>-->
+<!--            <version>1.11.2</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.apache.kafka</groupId>-->
+<!--            <artifactId>kafka-clients</artifactId>-->
+<!--            <version>3.6.0</version>-->
+<!--        </dependency>-->
+
+
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.confluent/kafka-avro-serializer &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>io.confluent</groupId>-->
+<!--            <artifactId>kafka-avro-serializer</artifactId>-->
+<!--            <version>3.3.1</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.apache.avro</groupId>-->
+<!--                    <artifactId>avro</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.apache.commons</groupId>-->
+<!--                    <artifactId>commons-compress</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>io.confluent</groupId>-->
+<!--                    <artifactId>kafka-schema-registry-client</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>io.confluent</groupId>-->
+<!--                    <artifactId>common-utils</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
+
+
+<!--    </dependencies>-->
+
 
     <properties>
+        <avro.version>1.11.1</avro.version>
         <kafka.version>7.2.2-ccs</kafka.version>
         <confluent.version>7.2.2</confluent.version>
     </properties>
 
+    <!--necessary to resolve confluent dependencies-->
     <repositories>
         <repository>
             <id>confluent</id>
             <url>https://packages.confluent.io/maven/</url>
         </repository>
+
     </repositories>
 
-    <dependencies>
 
+    <dependencies>
+        <!--Only dependency needed for the avro part-->
+        <!-- https://mvnrepository.com/artifact/org.apache.avro/avro -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+
+        <!--dependencies needed for the kafka part-->
+        <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
@@ -42,6 +119,50 @@
             <version>2.0.7</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>timestamp-interceptor</artifactId>
+            <version>7.4.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.confluent.cloud</groupId>
+                    <artifactId>events-schema</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.observability</groupId>
+                    <artifactId>telemetry-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.observability</groupId>
+                    <artifactId>telemetry-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>io.confluent</groupId>-->
+<!--            <artifactId>kafka-avro-serializer</artifactId>-->
+<!--            <version>${confluent.version}</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.apache.avro</groupId>-->
+<!--                    <artifactId>avro</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.apache.commons</groupId>-->
+<!--                    <artifactId>commons-compress</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>io.confluent</groupId>-->
+<!--                    <artifactId>kafka-schema-registry-client</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>io.confluent</groupId>-->
+<!--                    <artifactId>common-utils</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
 
     </dependencies>
 
@@ -61,16 +182,70 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
-
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.example.kafka.Consumer</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
-
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.example.kafka.Consumer</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
+            <!--for specific record-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.avro</groupId>-->
+<!--                <artifactId>avro-maven-plugin</artifactId>-->
+<!--                <version>${avro.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>generate-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>schema</goal>-->
+<!--                            <goal>protocol</goal>-->
+<!--                            <goal>idl-protocol</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <sourceDirectory>${project.basedir}/src/main/resources/avro</sourceDirectory>-->
+<!--                            <stringType>String</stringType>-->
+<!--                            <createSetters>false</createSetters>-->
+<!--                            <enableDecimalLogicalType>true</enableDecimalLogicalType>-->
+<!--                            <fieldVisibility>private</fieldVisibility>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+            <!--force discovery of generated classes-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -82,10 +257,17 @@
                         <goals>
                             <goal>add-source</goal>
                         </goals>
+                        <configuration>
+                            <sources>
+                                <source>target/generated-sources/avro</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+
 
 </project>
